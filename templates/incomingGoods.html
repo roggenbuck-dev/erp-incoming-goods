@@ -1,0 +1,76 @@
+<html lang = "en">
+<head>
+     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IncomingGoods</title>
+    <!-- Javascript-Library for for example Ajax -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 2px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<table>
+    <thead>
+        <tr>
+            <th>quantity</th>
+            <th>created_by</th>
+            <th>created_at</th>
+            <th>product</th>
+            <th>warehouse</th>
+            <th>action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for incomingGood in incomingGoods %}
+            <tr>
+                <td>{{ incomingGood.quantity }}</td>
+                <td>{{ incomingGood.created_by }}</td>
+                <td>{{ incomingGood.created_at }}</td>
+                <td>{{ incomingGood.product }}</td>
+                <td>{{ incomingGood.warehouse }}</td>
+                <td>
+                    <button onclick="deleteEntry('{{ incomingGood.id }}')">Delete</button>
+                    <a href="{% url 'update' incomingGood.id %}"><button>Update</button></a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'new_goods' %}"><button>Create</button></a>
+<script>
+    function deleteEntry(entryId) {
+        $.ajax({
+            url: '/incoming-goods/delete/' + entryId + '/',
+            method: 'POST',
+            data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+            success: function (response) {
+                location.reload();
+            },
+            error: function (error) {
+                console.error('Error deleting entry:', error);
+            }
+        });
+    }
+
+     function updateEntry(entryId) {
+            // Redirect to the update view for the selected entry
+            window.location.href = '/incoming-goods/update/' + entryId + '/';
+        }
+</script>
+</body>
+</html>
